@@ -7,6 +7,7 @@ using SkillTask = Task.Task;
 public class Skill : ISkill
 {
     private Attribute m_Attribute;
+    private SkillComplate m_Complate;
     private Entity m_Target;
     private Entity m_Caster;
 
@@ -53,9 +54,15 @@ public class Skill : ISkill
     {
         this.Attribute = attribute;
     }
-  
+    /// <summary>
+    /// 技能结束
+    /// </summary>
     public void End()
     {
+        if (this.m_Complate != null)
+        {
+            this.m_Complate(this);
+        }
     }
 
     public IEnumerator Cast()
@@ -79,17 +86,16 @@ public class Skill : ISkill
         }
     }
 
-    public void Init<T, U>(T caster, U target, Attribute attribute = null) where T : Entity where U : Entity
-    {
-        this.Target = target;
-        this.Caster = caster;
-        this.Attribute = Attribute ?? attribute;
-    }
     public bool IsValid(IVerify verify)
     {
         if (verify != null)
         {
-            return verify.Verify(this.Caster, this.Target, this.Attribute);
+            bool valid = verify.Verify(this.Caster, this.Target, this.Attribute);
+            if (!valid)
+            {
+                Interrupt(new InterruptValid());
+            }
+            return false;
         }
         return true;
     }
@@ -126,6 +132,7 @@ public class Skill : ISkill
         {
             interrupt.Handle(this.Caster);
         }
+        End();
     }
     /// <summary>
     /// 处理驱散
@@ -140,15 +147,13 @@ public class Skill : ISkill
         return damage.Handle(this);
     }
 
-    /// <summary>
-    /// 技能结束
-    /// </summary>
-    /// <param name="complate"></param>
-    public void End(SkillComplate complate = null)
+    public void Init<T, U>(T caster, U target, Attribute attribute = null, SkillComplate complate = null)
+        where T : Entity
+        where U : Entity
     {
-        if (complate != null)
-        {
-            complate(this);
-        }
+        this.Target = target;
+        this.Caster = caster;
+        this.Attribute = Attribute ?? attribute;
+        this.m_Complate = complate;
     }
 }

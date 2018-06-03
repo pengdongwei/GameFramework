@@ -131,4 +131,9 @@ public class Entity: IBuff {
     {
 
     }
+
+    public bool IsInvencible()
+    {
+        return false;
+    }
 }

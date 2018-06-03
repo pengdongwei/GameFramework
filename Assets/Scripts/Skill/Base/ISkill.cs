@@ -9,7 +9,7 @@ public interface ISkill  {
     /// </summary>
     /// <param name="target">技能作用的目标</param>
     /// <param name="attribute">技能携带的属性</param>
-    void Init<T, U>(T caster, U target, Attribute attribute) where T : Entity where U : Entity;
+    void Init<T, U>(T caster, U target, Attribute attribute=null, SkillComplate complate = null) where T : Entity where U : Entity;
     /// <summary>
     /// 是否可以通过
     /// </summary>
@@ -37,7 +37,7 @@ public interface ISkill  {
     /// <summary>
     /// 结束
     /// </summary>
-    void End(SkillComplate complate = null);
+    void End();
     /// <summary>
     /// 中断
     /// </summary>
